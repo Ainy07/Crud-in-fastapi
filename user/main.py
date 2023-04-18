@@ -1,15 +1,16 @@
 # from typing import Union
 from fastapi import FastAPI
-from app import router as AppsRoute
+from app import router as UsersRoute
+from app import api as UsersAPI
 from tortoise.contrib.fastapi import register_tortoise
 
 
 app = FastAPI()
 
 
+app.include_router(UsersRoute.router)
+app.include_router(UsersAPI.app,tags=["api"])
 
-
-app.include_router(AppsRoute.router)
 
 register_tortoise(
     app,
