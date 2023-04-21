@@ -23,6 +23,8 @@ class Delete(BaseModel) :
     id : int
     
     
+
+    
 class Update(BaseModel):
     id : int
     email:str

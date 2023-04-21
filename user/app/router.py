@@ -55,6 +55,17 @@ async def read_item(request : Request):
 async def read_item(request : Request):
     return templates.TemplateResponse("update.html", {"request" : request,})
 
+#table
+@router.get("/table/",response_class=HTMLResponse)
+async def read_item(request : Request):
+    return templates.TemplateResponse("table.html", {"request" : request,})
+
+
+#delete
+@router.get("/delete/",response_class=HTMLResponse)
+async def read_item(request : Request):
+    return templates.TemplateResponse("delete.html", {"request" : request,})
+
 @router.post("/registration/", response_class=HTMLResponse)
 async def read_item(request : Request , email :str = Form(...),
                     name : str = Form(...),
@@ -100,21 +111,69 @@ async def load_user(email : str):
     
     
 @router.post('/loginuser/')
-async def login(request :Request , email :str = Form(...),
-                password :str = Form(...)):
+async def login(request: Request, email: str = Form(...),
+                password: str = Form(...)):
     email = email
     user = await load_user(email)
     if not user:
-        return {'USER NOT REGISTRATION'}
+        return {'USER NOT REGISTERED'}
     elif not verify_password(password, user.password):
         return {'PASSWORD IS WRONG'}
     access_token = manager.create_access_token(
-        data = dict(sub=email)
-    )    
+        data=dict(sub=email)
+    )
     if "_messages" not in request.session:
         request.session['_messages'] = []
-        new_dict = {'user_id': str(user.id),"email":email,"access_token":str(access_token)}
-        request.session['_massages'].append(
+        new_dict = {"user_id": str(
+            user.id), "email": email, "access_token": str(access_token)}
+        request.session['_messages'].append(
             new_dict
         )
-    return RedirectResponse("/update/",status_code=status.HTTP_302_FOUND)    
+    return RedirectResponse('/update/', status_code=status.HTTP_302_FOUND)
+
+@router.get("/table/", response_class=HTMLResponse)
+async def read_item(request: Request):
+    users = await User.all()
+    return templates.TemplateResponse("table.html", {
+        "request": request,
+        "users": users
+    })
+
+@router.get("/update/{id}", response_class=HTMLResponse)
+async def read_item(request: Request, id: int):
+    user = await User.get(id=id)
+    return templates.TemplateResponse("update.html", {
+        "request": request,
+        "user": user
+    })
+
+# @router.get("/update_user/", response_class=HTMLResponse)
+# async def update(request : Request , id : int = Form(...),
+#                  email :str = Form(...),
+#                     name : str = Form(...),
+#                     phone : str = Form(...)):
+#     user = await User.get(id=id)
+#     if await User.filter(email=email).exists():
+#         return RedirectResponse("/", status_code=status.HTTP_302_FOUND)
+    
+#     elif await User.filter(phone=phone).exists():
+#         return RedirectResponse("/", status_code=status.HTTP_302_FOUND)
+        
+#     else:
+#         await User.filter(id=id).update(email=email,name=name,phone=phone,)
+#         return RedirectResponse("/table/", status_code=status.HTTP_302_FOUND)    
+    
+
+
+@router.post("/update_user/")
+async def update(request: Request, id: int = Form(...),
+                 full_name: str = Form(...),
+                 Email: str = Form(...),
+                 Phone: str = Form(...),
+                 ):
+    user = await User.get(id=id)
+    await user.filter(id=id).update(email=Email,
+                                      name=name,
+                                      phone=Phone
+                                      )
+    return RedirectResponse('/table/', status_code=status.HTTP_302_FOUND)

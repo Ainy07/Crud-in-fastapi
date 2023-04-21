@@ -1,4 +1,4 @@
-
+{% load static %}
 {%load bootstrap3%}
 <!DOCTYPE html>
 <html>
@@ -11,7 +11,7 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
- <link href="style.css" rel="stylesheet"/>
+ <link href="{% static 'style.css' %}" rel="stylesheet"/>
  
 <script>
 // Get the modal
@@ -186,32 +186,26 @@ hr {
 </style>
 </head>
 <body>
-<h1>CRUD</h1>
+<h1>Update</h1>
 <table id="customers">
   <tr>
-  <th> Name</th>
-  <th>email</th>
-    <th>contact</th>
-    <th>address</th>
-    <th>DOB</th>
-    <th>Action</th>
+  <th>Name</th>
+  <th>Email</th>
+    <th>Phone </th>
+     <th>Action</th>
   </tr>
-  {% if data %}
+  {% if users %}
   <tbody>
- {% for person in data%}
+ {% for user in users %}
   <tr>
 
-  <td>{{person.name}}</td>
-  <td>{{person.email}}</td>
-  <td>{{person.contact}}</td>
-  <td>{{person.address}}</td>
-  <td>{{person.DOB}}</td>
+  <td>{{user.name}}</td>
+  <td>{{user.email}}</td>
+  <td>{{user.phone}}</td>
   <td><div>
-     <a href="{% url 'delete' person.pk %}" type="submit" class="btn btn-info text-white shadow btn-xs sharp me-1"
-    data-bs-target="#delete" ... onclick="return confirm('Are you sure you want to delete this?') ">
-    <i class="fa fa-trash"> Delete</i>>
+    <a href="/delete/{{user.id}}" class="btn btn-denger">delete</a>
   
-    <a href="/update_view/{{person.id}}/" class="btn btn-warning text-white">update</a>
+    <a href="/update/{{user.id}}" class="btn btn-primary">Edit</a>
     </div>
     </td>
   
@@ -238,6 +232,13 @@ hr {
     
       <div class="clearfix">
       <input type="hidden" id="del_id">
+
+   {% comment %} <div id="id01" class="modal">
+  <span onclick="document.getElementById('id01').style.display='none';" class="close" title="Close Modal">×</span>
+  <form class="modal-content" action="/action_page.php">
+    <div class="container">
+      <h1>Update Account</h1> {% endcomment %}
+      {% comment %} <p>Are you sure you want to delete account?</p> {% endcomment %}
       {% csrf_token %}
         <button type="button" onclick="document.getElementById('id01').style.display='none'" class="cancelbtn">NO</button>
         <button type="button"  onclick="deleteUser();document.getElementById('id01').style.display='none'" class="deletebtn">YES</button>
@@ -247,110 +248,3 @@ hr {
 </div>
 
 
-
-<!-- The Modal -->
-  <div class="modal" id="myModal">
-    <div class="modal-dialog">
-      <div class="modal-content">
-      
-        <!-- Modal Header -->
-        <div class="modal-header">
-          <h4 class="modal-title">Modal Heading</h4>
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
-        </div>
-        
-        <!-- Modal body -->
-        <div class="modal-body">
-          Modal body..
-        </div>
-        
-        <!-- Modal footer -->
-        <div class="modal-footer">
-          <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-        </div>
-        
-      </div>
-    </div>
-  </div>
-
-
-
-<script>
-
-function deleteUser(){
-
-  let uid = document.getElementById('del_id').value
-   let  token = document.getElementsByName('csrfmiddlewaretoken')[0].value
-   let cookie = document.cookie
-   let csrfToken = cookie.substring(cookie.indexOf('=') + 1)
-
-   // token = $('input[name=csrfmiddlewaretoken]').val()
- user = { 
-            "uid":uid,
-            }
-
-
-        // Options to be given as parameter 
-        // in fetch for making requests
-        // other then GET
-        let options = {
-            method: 'POST',
-             headers: {
-                'Content-Type': 
-                    'application/json;charset=utf-8',
-                     'X-CSRFToken': csrfToken
-            }, 
-            body: JSON.stringify(parseInt(uid))
-        }
-  
-        // Fake api for making post requests
-        let fetchRes = fetch(
-                "/delete_user/", options);
-        fetchRes.then(res =>
-            res.json()).then(d => {
-                console.log(d)
-                document.location.reload()
-            })
-}
-
-
-function UpdateUser(){
-
-  let uid = document.getElementById('edi_id').value
-   let  token = document.getElementsByName('csrfmiddlewaretoken')[0].value
-   let cookie = document.cookie
-let csrfToken = cookie.substring(cookie.indexOf('=') + 1)
-
-   // token = $('input[name=csrfmiddlewaretoken]').val()
- user = { 
-            "uid":uid,            
-           
-            
-        }
-         let options = {
-            method: 'POST',
-             headers: {
-                'Content-Type': 
-                    'application/json;charset=utf-8',
-                     'X-CSRFToken': csrfToken
-            }, 
-            body: JSON.stringify(parseInt(uid))
-        }
-  
-        // Fake api for making post requests
-        let fetchRes = fetch(
-                "/update_user/", options);
-        fetchRes.thenupdate_userupdate_user(res =>
-            res.json()).then(d => {
-                console.log(d)
-                document.location.reload()
-            })
-
-
-
-}         
-</script>
-</body>
-</html>
-  
-  

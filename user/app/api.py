@@ -80,6 +80,11 @@ async def delete(data:Delete):
     user_obj = await User.get(id = data.id).delete()
     return {"status":True , "message":"delete user"} 
 
+@app.delete("/all_delete/")
+async def alldelete():
+    user_obj = await User.all().delete()
+    return {"status":True , "message":" all delete "} 
+
 
 @app.put("/update_user/{id}")
 async def update(data:Update):

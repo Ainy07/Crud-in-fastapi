@@ -3,10 +3,14 @@ from fastapi import FastAPI
 from app import router as UsersRoute
 from app import api as UsersAPI
 from tortoise.contrib.fastapi import register_tortoise
+from starlette.middleware.sessions import SessionMiddleware
+from starlette.middleware import Middleware
 
+middleware = [
+    Middleware(SessionMiddleware, secret_key='super-secret')
+]
 
-app = FastAPI()
-
+app = FastAPI(middleware=middleware)
 
 app.include_router(UsersRoute.router)
 app.include_router(UsersAPI.app,tags=["api"])

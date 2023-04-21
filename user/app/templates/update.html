@@ -22,16 +22,13 @@
             <div class="col-right">
                 <div class="login-form">
                     <h2>Update</h2>
-                    <form method='post' action='/update/'>
-                        
-                        <!-- <input type="hidden" name='uid' value="{{person.id}}"/> -->
+                    <form method='post' action='/update_user/'>
+                        <!-- <input type="hidden" name="id" value="{{user.id}}"> -->
                       <p> <label>Name<span>*</span></label> <input type="text" name="name" placeholder=" Please Enter name " required> </p>
-                        <p> <label>Email id<span>*</span></label> <input type="email" name="email" placeholder=" Please Enter Email" required> </p>
-                        <p> <label>Address<span>*</span></label> <input type="text" name="address" placeholder="Please Enter Address" required> </p>
-                        <p> <label>DOB<span>*</span></label> <input type="date" name="DOB" placeholder="Please Enter DOB" required> </p>
-                        <p> <label>Contact number<span>*</span></label> <input type="number" name="contact" maxlength="10" placeholder="Please Enter Contact Number" required> </p>
-                        <p> <input type="submit" value="Sign In"> </p>
-                        <p> <a href="">Forgot password?</a> </p>
+                        <p> <label>Email <span>*</span></label> <input type="email" name="email" placeholder=" Please Enter Email" required> </p>
+                        <p> <label>phone<span>*</span></label> <input type="number" name="phone" maxlength="10" placeholder="Please Enter Contact Number" required> </p>
+                        <p> <input type="submit" value="update"> </p>
+                        
                     </form>
                 </div>
             </div>
