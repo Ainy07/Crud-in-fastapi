@@ -6,9 +6,6 @@ from . models import User
 import typing
 import passlib
 from fastapi_login import LoginManager
-# from fastapi import Depends
-# from fastapi.security import OAuth2PasswordRequestForm
-# from fastapi_login.exceptions import InvalidCredentialsException
 
 
 
@@ -26,45 +23,18 @@ def get_password_hash(password):
     return pwd_context.hash(password)
 
 @manager.user_loader()
-def load_user(email: str):  # could also be an asynchronous function
+def load_user(email: str):  
     user = fake_db.get(email)
     return user
-# def flash(request: Request, message: typing.Any, category: str = "") -> None:
-#     if "_messages" not in request.session:
-#         request.session["_messages"] = []
-#     request.session["_messages"].append({"message": message, "category": category})
 
 
-
-# def get_flashed_messages(request: Request):
-#     print(request.session)
-#     return request.session.pop("_messages") if "_messages" in request.session else []
 
 #registration
 @router.get("/",response_class=HTMLResponse)
 async def read_item(request : Request):
     return templates.TemplateResponse("signup.html", {"request" : request,})
 
-#login
-@router.get("/login/",response_class=HTMLResponse)
-async def read_item(request : Request):
-    return templates.TemplateResponse("login.html", {"request" : request,})
 
-#update
-@router.get("/update/",response_class=HTMLResponse)
-async def read_item(request : Request):
-    return templates.TemplateResponse("update.html", {"request" : request,})
-
-#table
-@router.get("/table/",response_class=HTMLResponse)
-async def read_item(request : Request):
-    return templates.TemplateResponse("table.html", {"request" : request,})
-
-
-#delete
-@router.get("/delete/",response_class=HTMLResponse)
-async def read_item(request : Request):
-    return templates.TemplateResponse("delete.html", {"request" : request,})
 
 @router.post("/registration/", response_class=HTMLResponse)
 async def read_item(request : Request , email :str = Form(...),
@@ -72,16 +42,13 @@ async def read_item(request : Request , email :str = Form(...),
                     phone : str = Form(...),
                     password : str = Form(...)):
     if await User.filter(email=email).exists():
-        # flash(request , "Email already exists")
         return RedirectResponse("/", status_code=status.HTTP_302_FOUND)
     
     elif await User.filter(phone=phone).exists():
-        # flash(request , "Phone number already exists")
         return RedirectResponse("/", status_code=status.HTTP_302_FOUND)
         
     else:
         await User.create(email=email,name=name,phone=phone,password=get_password_hash(password))
-        # flash(request , "Successfully register")
         return RedirectResponse("/login/", status_code=status.HTTP_302_FOUND)    
     
     
@@ -100,6 +67,12 @@ async def read_item(request : Request , email :str = Form(...),
 #         data=dict(sub=email)
 #     )
 #     return {'access_token': access_token , 'token_type':'bearer'}
+
+
+#login
+@router.get("/login/",response_class=HTMLResponse)
+async def read_item(request : Request):
+    return templates.TemplateResponse("login.html", {"request" : request,})
 
 
 
@@ -129,7 +102,8 @@ async def login(request: Request, email: str = Form(...),
         request.session['_messages'].append(
             new_dict
         )
-    return RedirectResponse('/update/', status_code=status.HTTP_302_FOUND)
+    return RedirectResponse('/table/', status_code=status.HTTP_302_FOUND)
+
 
 @router.get("/table/", response_class=HTMLResponse)
 async def read_item(request: Request):
@@ -138,7 +112,8 @@ async def read_item(request: Request):
         "request": request,
         "users": users
     })
-
+    
+    
 @router.get("/update/{id}", response_class=HTMLResponse)
 async def read_item(request: Request, id: int):
     user = await User.get(id=id)
@@ -147,33 +122,23 @@ async def read_item(request: Request, id: int):
         "user": user
     })
 
-# @router.get("/update_user/", response_class=HTMLResponse)
-# async def update(request : Request , id : int = Form(...),
-#                  email :str = Form(...),
-#                     name : str = Form(...),
-#                     phone : str = Form(...)):
-#     user = await User.get(id=id)
-#     if await User.filter(email=email).exists():
-#         return RedirectResponse("/", status_code=status.HTTP_302_FOUND)
-    
-#     elif await User.filter(phone=phone).exists():
-#         return RedirectResponse("/", status_code=status.HTTP_302_FOUND)
-        
-#     else:
-#         await User.filter(id=id).update(email=email,name=name,phone=phone,)
-#         return RedirectResponse("/table/", status_code=status.HTTP_302_FOUND)    
-    
 
 
 @router.post("/update_user/")
 async def update(request: Request, id: int = Form(...),
-                 full_name: str = Form(...),
-                 Email: str = Form(...),
-                 Phone: str = Form(...),
+                 name: str = Form(...),
+                 email: str = Form(...),
+                 phone: str = Form(...),
                  ):
     user = await User.get(id=id)
-    await user.filter(id=id).update(email=Email,
+    await User.filter(id=id).update(email=email,
                                       name=name,
-                                      phone=Phone
+                                      phone=phone
                                       )
+    return RedirectResponse('/table/', status_code=status.HTTP_302_FOUND)
+
+
+@router.get("/delete/{id}", response_class=HTMLResponse)
+async def delete(request: Request, id: int):
+    person_all = await User.get(id=id).delete()
     return RedirectResponse('/table/', status_code=status.HTTP_302_FOUND)
